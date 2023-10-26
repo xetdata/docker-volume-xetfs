@@ -9,6 +9,7 @@ RUN apt update && \
     rm -rf /var/lib/apt/lists/*
 
 # Setup a default git user/email
+# TODO: set via options on volume creation
 RUN git config --global user.name "gatling" && \
     git config --global user.email gatling@xethub.com
 
