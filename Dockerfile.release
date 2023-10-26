@@ -1,0 +1,20 @@
+FROM ubuntu:22.04
+
+# Setup mount and plugin directories needed for the plugin
+RUN mkdir -p /run/docker/plugins /mnt/state /mnt/volumes
+
+# Install dependencies
+RUN apt update && \
+    apt install -y git nfs-common && \
+    rm -rf /var/lib/apt/lists/*
+
+# Setup a default git user/email
+# TODO: set via options on volume creation
+RUN git config --global user.name "gatling" && \
+    git config --global user.email gatling@xethub.com
+
+# Copy binaries for git-xet and volume binary
+COPY volume-xethub ./docker-volume-xethub
+COPY git-xet /usr/local/bin/git-xet
+
+CMD ["/docker-volume-xethub"]

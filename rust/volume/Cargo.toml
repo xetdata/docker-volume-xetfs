@@ -1,0 +1,28 @@
+[package]
+name = "docker-volume-xetfs"
+version = "0.1.0"
+edition = "2021"
+authors = ["Joseph Godlewski <jgodlewski@xethub.com>"]
+description = "A Docker Volume to access XetHub repositories"
+homepage = "https://github.com/xetdata/docker-volume-xetfs"
+repository = "https://github.com/xetdata/docker-volume-xetfs"
+readme = "README.md"
+keywords = ["docker", "ML", "dataset"]
+license = "BSD-3-Clause"
+categories = ["filesystem", "science", "virtualization"]
+publish = true
+include = ["src/**/*", "src/*", "Cargo.toml", "LICENSE", "README.md"]
+
+[dependencies]
+anyhow = "1.0.71"
+axum = "0.6.18"
+async-trait = "0.1.68"
+clap = { version = "4.2.7", features = ["derive"] }
+const_format="0.2"
+docker-volume = "0.1.1"
+git-version = "0.3"
+humantime = "2.1.0"
+hyper = "0.14.26"
+tokio = { version = "1.28.0", features = ["full"] }
+tracing = "0.1.37"
+tracing-subscriber = {version = "0.3.17", features = ["env-filter", "json"] }

@@ -1,0 +1,38 @@
+{
+  "Description": "A Plugin for Docker to allow mounting a XetHub repo in a container",
+  "Documentation": "https://xethub.com",
+  "Entrypoint": ["/docker-volume-xethub", "unix"],
+  "Env": [
+    {
+      "Description": "",
+      "Name": "DEBUG",
+      "Settable": ["value"],
+      "Value": "0"
+    }
+  ],
+  "Interface": {
+    "Socket": "xethub.sock",
+    "Types": ["docker.volumedriver/1.0"]
+  },
+  "Linux": {
+    "Capabilities": ["CAP_SYS_ADMIN"],
+    "AllowAllDevices": false,
+    "Devices": null
+  },
+  "Mounts": [
+    {
+      "destination": "/mnt/state",
+      "options": ["rbind"],
+      "name": "state",
+      "source": "/var/lib/docker/plugins/",
+      "settable": ["source"],
+      "type": "bind"
+    }
+  ],
+  "Network": {
+    "Type": "host"
+  },
+  "PropagatedMount": "/data",
+  "User": {},
+  "Workdir": ""
+}
