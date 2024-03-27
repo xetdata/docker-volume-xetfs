@@ -19,3 +19,7 @@ builder/cargo_cache
 git-xet
 /rootfs
 volume-xethub
+
+# ide
+.idea/
+.vscode/
