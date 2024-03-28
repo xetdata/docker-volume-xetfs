@@ -27,6 +27,8 @@ pub struct XetVolume {
     mount_path: PathBuf,
     // Watch for changes to the commit reference over some interval (e.g. 30s, 1h)
     watch: Option<String>,
+    // Specify CAS server
+    cas: Option<String>,
 }
 
 impl XetVolume {
@@ -38,6 +40,7 @@ impl XetVolume {
             "pat" => self.pat = value,
             "write" => self.writeable = bool::from_str(&value.to_lowercase()).unwrap_or(false),
             "watch" => self.watch = Some(value.to_lowercase()),
+            "cas" => self.cas = Some(value),
             _ => {
                 return Err(VolumeError::NoOption(key));
             }
@@ -146,6 +149,9 @@ impl VolumeDriver for XetDriver {
         if !volume.username.is_empty() && !volume.pat.is_empty() {
             git_xet_cmd.env("XET_USER_NAME", &volume.username);
             git_xet_cmd.env("XET_USER_TOKEN", &volume.pat);
+        }
+        if let Some(cas) = &volume.cas {
+            git_xet_cmd.env("XET_CAS_SERVER", cas.as_str());
         }
         let mut mount_cmd = git_xet_cmd
             .arg("mount")
