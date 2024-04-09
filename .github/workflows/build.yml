@@ -21,6 +21,11 @@ jobs:
         uses: actions-rs/toolchain@v1
         with:
           toolchain: stable
+      
+      - name: Install protoc
+        run: |
+          # TODO: use action to install protoc, requires GH token
+          sudo apt-get install protobuf-compiler
 
       - name: Build the Rust code
         run: |
