@@ -4,12 +4,12 @@ set -x
 
 
 if [ ! -f "git-xet" ] || [ ! -f "volume-xethub" ]; then
-  cd builder
+  pushd builder
     docker-compose build rust_build
-    docker-compose up rust_build
-    cp rust_target/release/git-xet ..
-    cp rust_target/release/volume-xethub ..
-  cd ..
+    docker-compose run  --rm --name builder rust_build
+  popd
+  cp builder/rust_target/release/git-xet .
+  cp builder/rust_target/release/volume-xethub .
 fi
 
 # check we have git-xet
@@ -27,8 +27,11 @@ fi
 # ensure volume will be able to execute git-xet
 chmod +x git-xet
 
-set -x
+IMAGE_NAME=xethub-volume
 PLUGIN_NAME=xethub/xetfs
+TAG=latest
+
+set -x
 
 # remove existing plugin
 docker plugin disable -f $PLUGIN_NAME
@@ -37,14 +40,26 @@ docker plugin rm -f $PLUGIN_NAME
 set -e
 
 # build docker image
-docker build -t xethub-volume:latest -f Dockerfile.release .
-# update rootfs (might need to use sudo on linux)
-id=$(docker create xethub-volume:latest unix)
+docker build -t $IMAGE_NAME:$TAG -f Dockerfile.release .
+
+# update rootfs
+id=$(docker create $IMAGE_NAME:$TAG unix)
+
+UNAME=$( uname )
 mkdir -p rootfs
-docker export "$id" | tar -x -C rootfs
+if [[ $UNAME == "Linux" ]]; then
+  docker export "$id" | sudo tar -x -C rootfs
+else
+  docker export "$id" | tar -x -C rootfs
+fi
 docker rm -vf "$id"
-docker rmi xethub-volume:latest
+docker rmi $IMAGE_NAME:$TAG
 
 # create/enable the plugin
-docker plugin create $PLUGIN_NAME .
+if [[ $UNAME == "Linux" ]]; then
+  sudo docker plugin create $PLUGIN_NAME .
+else
+  docker plugin create $PLUGIN_NAME .
+fi
 docker plugin enable $PLUGIN_NAME
+
